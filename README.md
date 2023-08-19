@@ -1,1 +1,2 @@
-# LPD_Ctrl
+# ECE522_Project
+kmeans_vhdl
