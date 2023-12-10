@@ -1,4 +1,14 @@
-module Controller(
+parameter int PNL_BRAM_ADDR_SIZE_NB   =   15;
+parameter int PNL_BRAM_DBITS_WIDTH_NB =   PN_SIZE_NB;
+parameter int PN__NB   =   12;
+parameter int PN_PRECISION_NB =   4;
+parameter int PN_SIZE_LB      =   4;
+parameter int PN_SIZE_NB      =   PN__NB + PN_PRECISION_NB;
+parameter int PNL_BRAM_NUM_WORDS_NB   =   2**PNL_BRAM_ADDR_SIZE_NB;
+parameter int PN_BRAM_BASE   =   24576;
+
+module Controller 
+(
     //clk and reset
     input  logic clk,
     input  logic reset,
@@ -8,8 +18,8 @@ module Controller(
     //load unload signals
     input  logic LM_ULM_ready,
     output logic LM_ULM_start,
-    output logic [PNL_BRAM_ADDR_SIZE_NB-1 : 0]LM_ULM_base_address,
-    output logic [PNL_BRAM_ADDR_SIZE_NB-1 : 0]LM_ULM_upper_limit,
+    output logic [PNL_BRAM_ADDR_SIZE_NB-1 : 0] LM_ULM_base_address,
+    output logic [PNL_BRAM_ADDR_SIZE_NB-1 : 0] LM_ULM_upper_limit,
     output logic LM_ULM_load_unload,
     //histogram signals
     input  logic Histo_ready,
@@ -17,22 +27,25 @@ module Controller(
     output logic BRAM_select
 );
 
-enum {
-    idle,, 
+//`include "kmeans_pkg.sv"
+
+enum logic[3:0] {
+    idle,
     wait_lM_ULM_load, 
     wait_Histo, 
     wait_LM_ULM_unload
-}state, next_state;
+} curr_state, next_state;
 
-logic ready_c, ready_r;
+logic ready_c;
+logic ready_r;
 
 always_ff @( posedge clk ) begin : main_seq
     if (reset) begin
-        state <= idle;
+        curr_state <= idle;
         ready_r <= '1;
     end
     else begin
-        state <= next_state;
+        curr_state <= next_state;
         ready_r <= ready_c;  
     end
 end
@@ -57,21 +70,20 @@ always_comb begin : main_combo
                 ready_c = '0;
                 
                 //Start data load operation from C program
-                LM_ULM_   start = '1';
+                LM_ULM_start = '1;
 
                 //Setup memory base and upper_limit for loading of PNs into BRAM. ALWAYS SUBSTRACT 1 from the 'UPPER_LIMIT'
                 LM_ULM_base_address = PN_BRAM_BASE;
                 LM_ULM_upper_limit = PNL_BRAM_NUM_WORDS_NB -1;
-
-                next_state = wait_LM_ULM_load;
+                next_state = wait_lM_ULM_load;
             end
         end
 
-        wait_LM_ULM_load: begin
+        wait_lM_ULM_load: begin
             if(LM_ULM_ready) begin
                 Histo_start = '1;
                 BRAM_select = '1;
-                next_state = wait_Histo;
+                next_state= wait_Histo;
             end
         end
 
@@ -87,7 +99,7 @@ always_comb begin : main_combo
      
                 // Set LoadUnloadMem mode to 'unload' data from BRAM to C program
                 LM_ULM_load_unload = '1;
-                state_next = wait_LM_ULM_unload;
+                next_state = wait_LM_ULM_unload;
             end
         end
 

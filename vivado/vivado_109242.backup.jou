@@ -1,0 +1,15 @@
+#-----------------------------------------------------------
+# Vivado v2021.2 (64-bit)
+# SW Build 3367213 on Tue Oct 19 02:47:39 MDT 2021
+# IP Build 3369179 on Thu Oct 21 08:25:16 MDT 2021
+# Start of session at: Sat Aug 19 22:27:42 2023
+# Process ID: 109242
+# Current directory: /home/idris/projects/LPD_Ctrl/vivado
+# Command line: vivado
+# Log file: /home/idris/projects/LPD_Ctrl/vivado/vivado.log
+# Journal file: /home/idris/projects/LPD_Ctrl/vivado/vivado.jou
+# Running On: idris-HP-EliteBook-840-G3, OS: Linux, CPU Frequency: 2500.000 MHz, CPU Physical cores: 2, Host memory: 16640 MB
+#-----------------------------------------------------------
+start_gui
+open_project /home/idris/projects/codesign_project/Vivado/KMeans_Zybo_Verilog/KMeans.xpr
+upgrade_project -migrate_output_products

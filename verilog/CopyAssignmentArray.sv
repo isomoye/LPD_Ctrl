@@ -1,3 +1,11 @@
+
+parameter int PNL_BRAM_ADDR_SIZE_NB   =   15;
+parameter int PNL_BRAM_DBITS_WIDTH_NB =   PN_SIZE_NB;
+parameter int PN__NB   =   12;
+parameter int PN_PRECISION_NB =   4;
+parameter int PN_SIZE_LB      =   4;
+parameter int PN_SIZE_NB      =   PN__NB + PN_PRECISION_NB;
+
 module CopyAssignmentArray(
     input  logic clk,
     input  logic reset,
@@ -66,7 +74,6 @@ module CopyAssignmentArray(
     always_comb begin : main_combo
         next_state = curr_state;
         ready_c = ready_r;
-
         PN_addr_c = PN_addr_r;
         cluster_addr_c = cluster_addr_r;
         cluster_val_c = cluster_val_r;
@@ -76,6 +83,7 @@ module CopyAssignmentArray(
 
         PNL_BRAM_we = '0;
         do_PN_cluster_addr = '0;
+        PNL_BRAM_din  = '0;
         
         case (curr_state)
             idle: begin
@@ -97,12 +105,12 @@ module CopyAssignmentArray(
                 if (dist_count_r >= (Num_Vals - 1)) begin
 					next_state = idle;
                 end
-				else
+				else begin
 					//	points_addr_next <= to_unsigned(KMEANS_PN_BRAM_LOWER_LIMIT,PNL_BRAM_ADDR_SIZE_NB) 
 					//	+ (dist_count_reg * dims_count);
 					PN_addr_c = SRC_BRAM_addr + dist_count_r;
 					next_state   = get_cluster_val;
-				end if;
+				end
             end 
             get_cluster_val: begin
                 cluster_val_c = PNL_BRAM_dout;
@@ -119,7 +127,6 @@ module CopyAssignmentArray(
             end
 
             default: begin
-                default_case
             end
         endcase
     end

@@ -22,7 +22,7 @@ input logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] Num_Dims,
 output logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] P1_addr,
 output logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] P2addr,
 
-input logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] 
+input logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] Nu
 
 input logic [PNL_BRAM_ADDR_SIZE_NB - 1:0] TGT_BRAM_addr
 );
